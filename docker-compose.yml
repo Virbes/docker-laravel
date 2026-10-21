@@ -1,0 +1,20 @@
+name: sentient-support  # ⚠️ Cámbialo por el nombre del proyecto
+
+services:
+  app:
+    build:
+      context: .
+      target: dev
+      args:
+        UID: ${DOCKER_UID:-1000}
+        GID: ${DOCKER_GID:-1000}
+    command: composer run dev
+    ports:
+      - "${APP_PORT:-8000}:8000"     # Laravel (artisan serve)
+      - "${VITE_PORT:-5173}:5173"    # Vite (HMR)
+    environment:
+      SERVER_HOST: 0.0.0.0           # artisan serve debe escuchar fuera del contenedor
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # Llegar al MySQL del host (Linux, Windows y macOS)
+    volumes:
+      - .:/var/www/html              # Código en vivo; Laravel lee su .env desde aquí

@@ -1,0 +1,32 @@
+name: sentient-support-prod   # ⚠️ Único por proyecto
+
+x-app-common: &app-common
+  image: sentient-support/app:latest
+  restart: unless-stopped
+  volumes:
+    - ./.env:/var/www/html/.env:ro          # Configuración y secretos (no están en la imagen)
+    - ./storage:/var/www/html/storage       # Logs, uploads y caché; Nginx lee storage/app/public
+
+services:
+  app:
+    <<: *app-common
+    build:
+      context: .
+      target: prod
+      args:
+        UID: ${DOCKER_UID:-1000}
+        GID: ${DOCKER_GID:-1000}
+    ports:
+      - "127.0.0.1:${FPM_PORT:-9001}:9000"  # ⚠️ SOLO localhost
+
+  queue:
+    <<: *app-common
+    command: php artisan queue:work --tries=3 --timeout=90
+    depends_on:
+      - app
+
+  scheduler:
+    <<: *app-common
+    command: php artisan schedule:work
+    depends_on:
+      - app

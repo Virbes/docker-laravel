@@ -1,0 +1,35 @@
+# Control de versiones
+.git
+.gitignore
+.gitattributes
+
+# Dependencias (se instalan dentro de la imagen)
+vendor
+node_modules
+
+# Secretos y config local (NUNCA dentro de la imagen)
+.env
+.env.*
+!.env.example
+
+# Generados / temporales
+public/build
+public/hot
+public/storage
+bootstrap/ssr
+bootstrap/cache/*.php
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# IDE y SO
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
